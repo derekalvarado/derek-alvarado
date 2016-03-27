@@ -1,0 +1,52 @@
+body {
+  background-color: rgb(245, 239, 226);
+  color: rgb(78, 78, 78);
+  font-family: "courier new";
+  font-size: 19px;
+  margin: 0 auto;
+  max-width: 750px;
+  padding-left: 20px;
+  padding-right: 20px;
+  
+    
+}
+body li {
+
+}
+    
+.content li {
+  
+  padding: 10px;
+}
+
+header ul {
+  padding: 0;
+}
+
+header nav li {
+  
+  list-style: none;
+  margin: 10px auto;
+  
+}
+  header nav a {
+    border: 1px solid gray;
+    display: block;
+    list-style: none;
+    padding: 15px;
+    text-align: right
+    
+
+  }
+
+  header nav a:visited {
+    
+  }
+  header nav a:hover {
+    background-color: rgb(150, 150, 150);
+    display: block;
+    list-style: none;
+    padding: 15px;
+    transition: .5s background-color;
+  }
+
