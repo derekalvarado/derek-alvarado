@@ -15,8 +15,9 @@
       <h1>Derek Alvarado</h1>
       <nav class="main-navigation">
         <ul>         
-          <li><a href="#" ng-click="show('about')">About Me</a></li>
+          <li><a href="#" ng-click="show('about')">About</a></li>
           <li><a href="#" ng-click="show('contact')">Contact</a></li>
+          <li><a href="#" ng-click="show('thoughts')">Thoughts</a></li>
         </ul>      
       </nav>
     </header>
@@ -39,6 +40,11 @@
           <li><a href="https://www.linkedin.com/in/derek-alvarado-61b67a15">LinkedIn</a></li>
           <li>dmalvarado at gmail</li>
         </ul>
+
+      </div>
+      <div class="contact animate-show" ng-show="page=='thoughts'">
+        <h2>Thoughts:</h2>
+        <p>I have no thoughts right now.</p>
 
       </div>
     </div>
