@@ -19,34 +19,30 @@ body li {
   padding: 10px;
 }
 
-header ul {
-  padding: 0;
-}
 
-header nav li {
-  
-  list-style: none;
-  margin: 10px auto;
-  
+.main-navigation ul {
+  padding: 0px;
 }
-  header nav a {
-    border: 1px solid gray;
-    display: block;
+  .main-navigation li {
+    display: inline-block;
+    border: 1px solid;
+    border-radius: 2px;
     list-style: none;
+    width: 45%;
+  }
+  
+  .main-navigation a {
+    display: block;    
     padding: 15px;
-    text-align: right
-    
-
+    text-decoration: none;    
   }
 
-  header nav a:visited {
-    
+  .main-navigation a:visited {
+    color: #919191;
   }
-  header nav a:hover {
+  .main-navigation a:hover {
     background-color: rgb(150, 150, 150);
-    display: block;
-    list-style: none;
-    padding: 15px;
+    color: #E7E7E7;
     transition: .5s background-color;
   }
 
