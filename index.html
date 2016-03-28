@@ -6,47 +6,25 @@
   
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/X.Y.Z/angular-animate.js"></script>
+  <script src="js/angular-ui-router.min.js"></script>
   <script src="js/app.js"></script>
   
   <link href="css/main.css" type="text/css" rel="stylesheet">
 </head>
-  <body ng-controller="MainController" >
+<!--ng-controller="MainController" -->
+  <body>
     <header>
       <h1>Derek Alvarado</h1>
       <nav class="main-navigation">
         <ul>         
-          <li><a href="#" ng-click="show('about')">About</a></li>
-          <li><a href="#" ng-click="show('contact')">Contact</a></li>
-          <li><a href="#" ng-click="show('thoughts')">Thoughts</a></li>
+          <li><a ui-sref="about">About</a></li>
+          <li><a ui-sref="contact">Contact</a></li>
+          <li><a ui-sref="thoughts">Thoughts</a></li>
         </ul>      
       </nav>
     </header>
     <div class="content">
-      <div class="about-me animate-show" ng-show="page=='about'" >
-        <h2>About Me:</h2>
-        <p>I'm an application engineer who writes some code for work and some code for fun. </p>
-        <p>I currently work at Charles Schwab, maintaining our hosting platforms.</p>
-        <p>I have some completed projects and sandbox projects at these places: </p>
-        <ul>
-          <li><a href="http://plnkr.co/users/derekalvarado">Plnkr.co</a></li>
-          <li><a href="http://codepen.io/derekalvarado/" >Codepen.io</a></li>
-
-        </ul>
-      </div>
-      <div class="contact animate-show" ng-show="page=='contact'">
-        <h2>Contact:</h2>
-        <p>You can reach me here:</p>
-        <ul>
-          <li><a href="https://www.linkedin.com/in/derek-alvarado-61b67a15">LinkedIn</a></li>
-          <li>dmalvarado at gmail</li>
-        </ul>
-
-      </div>
-      <div class="contact animate-show" ng-show="page=='thoughts'">
-        <h2>Thoughts:</h2>
-        <p>I have no thoughts right now.</p>
-
-      </div>
+        <ui-view></ui-view>
     </div>
   </body>
 </html>
