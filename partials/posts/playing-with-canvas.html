@@ -1,0 +1,165 @@
+<a class="subtle-link" ui-sref="thoughts.list">...back</a>
+
+<h1>Playing with canvas</h1>
+
+<p>Say we wanted to get the color of an image pixel under the cursor, how would we do that? You might think, as I initially did, that you would plug an image into the DOM and then attach an event listener, listen for a mouse event, then inspect the data.</p>
+<p>As it turns out, it's not possible to accomplish the task using just an &lt;img&gt; tag, which may be surprising to you. Even though you can get the coordinates of the mouse, there's no way to get color information at the x and y coordinates.</p>
+<p>In order to accomplish this, you will need to use the <code>&lt;canvas&gt;</code> tag. I'm going to show you how this works.</p>
+
+<h3>Intro to <code>&lt;canvas&gt;</code> </h3>
+<p>First, we need to put a <code>&lt;canvas&gt;</code> element into the page and give it an ID so we can target it from code.</p>
+
+<div class="code-frame">
+  <p>Listing 1:</p>
+  <pre>
+&lt;canvas id="mycanvas"&gt;&lt;/canvas&gt;
+  </pre>
+</div>
+<p>Next, we're going to put an image on it so we can start gathering pixel data.</p>
+<p>We can think of the canvas as a real-life painting canvas, (i.e. stretched fabric over a frame) How do we interact with a real canvas? We can draw and paint on it, so that's what we're going to do here. </p>
+<p>Using the following code, we are going to plug a canvas element into the DOM:</p>
+<div class="code-frame">
+  <pre>
+var canvas = document.createElement('canvas');
+
+canvas.id = "mycanvas";
+
+//'canvasHolder' is just a div to help place the canvas
+document.getElementById('canvasHolder').appendChild(canvas);
+</pre>
+</div>
+
+<button onclick="MODULE.addCanvas()">Add canvas</button>
+<div id="canvasHolder"></div>
+<p>Now that there's a canvas on the page, we have to use a <strong>context</strong> in order to interact with it. For the type of task we're doing here, we're going to use a two-dimensional, or <strong>'2d'</strong> context</p>
+
+<p>Here's the code: </p>
+
+<div class="code-frame">
+  <p>Listing 2:</p>
+  <pre>
+var canvas = document.getElementById('mycanvas')
+var context = canvas.getContext('2d')
+  </pre>
+</div>
+
+<p>Great! Now we have a <strong>context</strong> that we can work with.</p>
+<p>Next, we have to put an image onto the canvas. In order to put an image onto the canvas, we first need an image element. This can be:</p>
+<ol>
+  <li>Constructed from code</li>
+  <li>Borrowed from another &lt;img&gt; element on the page</li>
+  <li>Taken directly from another &lt;canvas&gt; element on the page!</li>
+</ol>
+
+<p>For this example, we're going to do a combination of an options 1 and 2, and we're going to use this code to construct a new image:</p>
+<div class="code-frame">
+  <p>Listing 3:</p>
+  <pre>
+var img = new Image();
+img.style.position = "absolute";
+img.style.display = "-99999px";
+document.getElementsByTagName('body')[0].appendChild(img);
+/* More code to come */
+img.src = "https://upload.wikimedia.org/wikipedia/commons/a/ae/Cauliflower_Fractal_AVM.JPG"
+
+  </pre>
+</div>
+<p>The code above is how we are going to create an image element and set its source attribute. In order to get the image onto the context that we created above, we need to call <strong>context.drawImage(img, x, y, xWidth, yWidth)</strong></p>
+<p>Notice that we are actually adding the image to body, but we are removing it from document flow and placing it out of view with the <strong>position</strong> and <strong>display</strong> attributes. As far as I can tell, this is necessary to get an image
+  element created in JavaScript into the DOM so we can inspect its attributes and make it obey any css styles in our style sheet, but also keep it out of sight. </p>
+<p>Note that you can scale an image down to the size of the canvas using xWidth and yWidth. If you omit this step, the canvas border will basically be a window to a small segment of a much larger image.</p>
+<p>Important note: In listing 3 above, we set the src of the attribute immediately after creating the image element. If we were to call context.drawImage() immediately after, there's a chance that it will throw an error because the image has not been retrieved
+  from the other domain yet.</p>
+<p>To handle this case, we need to add an event listener to the image element right after its created, then handle the business of drawing it onto the context after it has finished loading.</p>
+<p>In addition, in order to prevent the image from being distorted, we need to set the width and height of the canvas to match the width and height of the image <em>before</em> drawing the image onto the canvas. We can accomplish this by grabbing the <strong>.width</strong>  and <strong>.height</strong> attributes of the &lt;img&gt; element and setting them to the <strong>.width</strong> and <strong>.height</strong> attributes of the &lt;canvas&gt;</p>
+
+<div class="code-frame">
+  <p>Listing 4:</p>
+  <pre>
+var img = new Image();
+img.addEventListener("load", function(e) {
+  //Note that 'this' refers to the new img node
+
+  canvas.width = this.width;
+  canvas.height = this.height;
+  context.drawImage(img, 0, 0, 300, 150);
+})
+img.src = "https://upload.wikimedia.org/wikipedia/commons/a/ae/Cauliflower_Fractal_AVM.JPG"
+  </pre>
+</div>
+<button onclick="MODULE.addImage()">Add image</button>
+<canvas id="mycanvas2" class="figure"></canvas>
+<p>
+  Ok, now that we used the context to draw and image, all we have to do is use another context API method called <strong>getImageData</strong>, which will return an ImageData object that contains the information we need.
+</p>
+<p>
+  The <strong>getImageData</strong> method takes 4 parameters
+</p>
+<ul>
+  <li>left: distance in px from left edge</li>
+  <li>top: distance in px from top edge</li>
+  <li>width: the width of the image data object </li>
+  <li>height: the height of the image data object </li>
+</ul>
+<p>
+  You can see here that top and left are going to have to be dynamically provided by the position of the mouse cursor. For that, we're going to have to add an event listener on the context. Here's the code
+</p>
+<div class="code-frame">
+  <pre>
+var canvas = document.getElementById("mycanvas");
+canvas.addEventListener("mousemove", someCallback)
+
+function someCallback(event) {
+  
+  //It took me forever to figure out 
+  //the next 4 lines
+  var el = e.currentTarget;        
+  var rect = el.getBoundingClientRect();
+  var x = e.clientX - rect.left;
+  var y = e.clientY - rect.top; 
+
+  var pixel = context.getImageData(x, y, 1, 1);
+  //data is an array of values that correspond to rgba values
+  var data = pixel.data;
+
+  //make a text string out of the rgba values
+  var rgba = 'rgba('+data[0]+','+data[1]+','+data[2]+','+data[3]+')';
+
+  //lastly, view the pixel color by setting the
+  //background of some target element to the rgba value
+
+  var viewer = document.getElementById("#viewer")
+  viewer.style.background = rgba;
+
+}
+  </pre>
+</div>
+
+<button onclick="MODULE.listing5()">Add listener</button>
+<div class="tight-container">
+  
+</div>
+<canvas id="mycanvas3" class="figure"></canvas>
+
+<div class="pixel-viewer">
+  <div id="pixel-viewer-colorbox" class="pixel-viewer-colorbox"></div>
+  <div id="pixel-viewer-text" class="pixel-viewer-text"></div>
+</div>
+
+<p>And voila! There you have it!</p>
+<p>
+A quick note about <code>el.getBoundingClientRect();</code>
+
+There are only 3 types of coordinates that the mouse event exposes.
+</p>
+<ul>
+<li>clientX and clientY</li>
+<li>pageX and pageY</li>
+<li>screenX and screenY</li>
+</ul>
+
+<p>You can read about them <a href="http://stackoverflow.com/questions/6073505/what-is-the-difference-between-screenx-y-clientx-y-and-pagex-y">here.</a></p>
+<p>In short, none of them are relative to the top left corner of the context area. That's a pretty big oversight if you ask me.</p>
+<p>One day I may do a full write-up on how I came to this solution, but for now, take it as the appropriate calculation of the mouse position, relative to the top left corner of the context.</p>
+
+<p> Thanks for reading!</p>
