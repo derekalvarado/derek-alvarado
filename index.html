@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html ng-app="myApp">
+
 <head>
   <title>Derek Alvarado</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,21 +17,27 @@
   <link href="css/main.css" type="text/css" rel="stylesheet">
 </head>
 <!--ng-controller="MainController" -->
-  <body>
-    <header>
-      <h1>Derek Alvarado</h1>
-      <nav class="main-navigation">
-        <ul>
-          <li><a ui-sref="about">About</a></li>
-          <li><a ui-sref="contact">Contact</a></li>
-          <li><a ui-sref="thoughts.list">Thoughts</a></li>
 
-        </ul>
-      </nav>
+<body>
+  <div class="main">
+
+    <header >
+      <h1 class="main-heading">Derek Alvarado</h1>
+
+
     </header>
-    <div class="content">
-        <ui-view></ui-view>
+    <nav class="main-navigation">
+      <div class="main-navigation-item"><a href="" ui-sref="about">About</a></div>
+      <div class="main-navigation-item"><a href="" ui-sref="contact">Contact</a></div>
+      <div class="main-navigation-item"><a href="" ui-sref="thoughts.list">Thoughts</a></div>
+
+    </nav>
+    <div class="content padding">
+      <ui-view></ui-view>
     </div>
+
     <footer></footer>
-  </body>
+  </div>
+</body>
+
 </html>

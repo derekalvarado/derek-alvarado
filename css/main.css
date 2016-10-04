@@ -1,5 +1,5 @@
 body {
-  background-color: rgb(245, 239, 226);
+  background-color: rgb(247, 247, 247);
   color: rgb(78, 78, 78);
   font-family: "courier new";
   font-size: 18px;
@@ -7,9 +7,6 @@ body {
   max-width: 750px;
   padding-left: 20px;
   padding-right: 20px;
-  
-
-
 }
 
 
@@ -31,33 +28,69 @@ footer {
 img {
   max-width: 400px;
 }
-
-.main-navigation ul {
-  padding: 0px;
+.main header {
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 0px;
 }
-  .main-navigation li {
-    display: inline-block;
-    border: 1px solid;
-    border-radius: 2px;
-    list-style: none;
-    width: 30%;
-  }
 
-  .main-navigation a {
+.main-navigation {
+  display: block;
+  background-color: #E7E7E7;
+}
+.main-navigation-item  {
+  
+  
+
+}
+  .main-navigation-item a {
     display: block;
-    padding: 15px 0px;
-    text-align: center;
-    text-decoration: none;
+    text-align: left;
+    color: #4e4e4e;
+    padding: 5px 20px;
+  }
+  .main-navigation a:hover {
+      color: #f7f7f7;
+      background-color: rgb(78, 78, 78);
+      transition: .5s background-color;
   }
 
   .main-navigation a:visited {
-    color: #919191;
+    /* color: #4e4e4e; */
   }
-  .main-navigation a:hover {
-    background-color: rgb(150, 150, 150);
-    color: #E7E7E7;
-    transition: .5s background-color;
+  .main-navigation a:active {
+
   }
+
+@media screen and (min-width: 768px) {
+
+  .main-heading {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  .main-navigation {
+    display: flex;
+  }
+
+  .main-navigation-item {
+      width: 100%;
+      font-size: 1.3em;
+      
+      text-align: center
+  }
+
+  .main-navigation a {
+      display: block;
+      padding: 15px 0px; 
+      text-align: center;
+
+  }
+
+
+
+}
+  
+
 
 .pixel-viewer { 
   max-width: 400px;
@@ -97,3 +130,44 @@ button {
   margin: 0;
   padding: 0;
 }
+
+.main {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    /* padding: 15px; */
+    border-radius: 5px;
+    background-color: rgb(245, 239, 226);
+}
+
+header {
+    /* padding: 15px; */
+    /* background: gray; */
+    /* color: #f9f9f9; */
+}
+
+.content {
+    padding: 15px;
+}
+
+h1.main-heading {
+    font-size: 3em;
+    margin: 0px;
+    width: 30%;
+}
+
+nav.main-navigation {
+    padding: 0px;
+    /* background-color: #969696; */
+}
+
+
+
+
+.padding {
+    padding: 20px;
+}
+
+.padding-sm {
+  padding: 5px;
+}
+
+
