@@ -1,5 +1,7 @@
 body {
+
   background-color: rgb(247, 247, 247);
+
   color: rgb(78, 78, 78);
   font-family: "courier new";
   font-size: 18px;
@@ -7,6 +9,7 @@ body {
   max-width: 750px;
   padding-left: 20px;
   padding-right: 20px;
+
 }
 
 
@@ -28,6 +31,7 @@ footer {
 img {
   max-width: 400px;
 }
+
 .main header {
   padding-left: 20px;
   padding-right: 20px;
@@ -92,6 +96,7 @@ img {
   
 
 
+
 .pixel-viewer { 
   max-width: 400px;
   height: 200px;
@@ -129,6 +134,7 @@ button {
   position: relative;
   margin: 0;
   padding: 0;
+
 }
 
 .main {
@@ -169,5 +175,6 @@ nav.main-navigation {
 .padding-sm {
   padding: 5px;
 }
+
 
 
