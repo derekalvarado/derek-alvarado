@@ -1,0 +1,123 @@
+<a class="subtle-link" ui-sref="thoughts.list">...back to posts</a>
+
+<h1>Getting Meta</h1>
+
+<p>In my previous post, <a ui-sref="thoughts.posts({name: 'playing-with-canvas'})">Playing with Canvas</a>, I setup a little tutorial to show you how to prep and use the canvas element.</p>
+<p>What I didn't show you, and that which is the subject of today's post, is how much work went into making that page load and function within the context of Angular and Angular UI Router</p>
+
+<p>If you are familiar with Angular, you know that one of the crucial components to developing a single page application is having something to manage state of the app while navigating the various pages of the app. The "de facto" solution for this in Angular 1 has been the <a href="https://github.com/angular-ui/ui-router">UI-Router</a>. By adding the module as a dependency to your Angular app, you can set up the various pages of the application in an Angular .config block, using the <strong>$stateProvider</strong>. The whole thing looks something like this:</p>
+
+<div class="code-frame">
+<pre>
+.config(function ($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.otherwise("/about");
+
+    $stateProvider
+        .state('about', {
+            url: '/about',
+            templateUrl: 'partials/about.html'
+        })
+        .state('contact', {
+            url: '/contact',
+            templateUrl: 'partials/contact.html'
+        })
+        .state('thoughts', {
+            url: '/thoughts',
+            templateUrl: 'partials/thoughts.html'
+
+        })
+        .state('thoughts.list', {
+            url: '/list',
+            templateUrl: 'partials/thoughts.list.html'
+
+        })
+        .state('thoughts.posts', {
+            url: '/posts/:name',
+
+            templateUrl: function ($stateParams) {
+                console.log($stateParams.name);
+                return 'partials/posts/' + $stateParams.name + '.html';
+            },
+            controller: "PostsController",
+            controllerAs: "posts",
+        })
+})
+</pre>
+</div>
+<p>Notice that the last <code>.state</code> specifies a controller, <strong>PostsController</strong>. This will be the controller that is responsible for managing blog posts. The controller is really only responsible for one thing - loading the javascript associated with that particular blog post. Also notice that it uses a parameterized url path, with <strong>:name</strong> as the parameter. This will make sense later.</p>
+
+<p>If you visit the "Playing with Canvas" blog post, you'll notice that there is a LOT of page specific javascript there. Buttons that add elements, drawing images to the canvase, etc. This presents a problem, because I have one controller, PostsController, loading the javascript for the "Playing with canvas" blog post. What are my options if I want to create a new blog post with it's own page-specific javascript?</p>
+
+<p>Let's start with the bad options: 
+    <ol>
+        <li><strong>Create a different controller for every post</strong> - Yea, this is bad. Now instead of PostsController, I have PlayingWithCanvasController, then I have GettingMetaController, and so on.</li>
+
+        <li><strong>Put the javascript inline with the blog post</strong> - This actually doesn't sound like such a bad idea. Using script tags, you could put all the javascript directly inline with the HTML for the blog post. It might make for a little trouble when debugging, but it turns out this is a non-starter. Browsers will not notice that a new script tag has been loaded into the DOM when using this method. It has to do with script loading details. <a href="https://www.html5rocks.com/en/tutorials/speed/script-loading/">Here's and excellent article</a> that I used extensively to understand this problem.  </li>
+
+    </ol>
+    
+</p>
+
+<p>Now, let’s look at the solution I’ve implemented. Here’s the code for the controller that gets loaded with a post</p>
+<div class="code-frame">
+<pre>
+function PostsController($log, $scope, $state, $stateParams, $rootScope, $window) {
+  var vm = this;
+
+  //Here’s where the magic happens
+  $rootScope.$on('$viewContentLoaded', function(e) {
+
+    var script = document.createElement('script');
+    script.src = "js/pagemodules/"+$stateParams.name+".js";
+    script.async = false;
+    document.head.appendChild(script);
+
+  })
+}
+</pre>
+</div>
+<p>The code above is the PostsController that gets loaded along with the contents of the blog post partial. When we navigate to this page, by using either a URL path, ui-sref, or $state.go, we must pass a “name” parameter so that, A.) the router knows the name of the blog post to load, and B.) the PostsController has that name available to it when it is loaded. </p>
+
+<p>Then, the controller waits till the content is loaded onto the page, and using plain ol’ javascript, it creates a script tag, sets the source to the location of the script for this html partial. In order to find this script by name, dynamically, it’s name needs to be passed into the controller by the router in some variable. By convention, I reused the <code>:name</code> parameter that comes from the ui-router. By this convention, the html partial and the page-specific javascript will need to be named the same. Through the magic of script loading, the browser WILL notice this script, and execute it.</p>
+
+<p>Pretty cool, huh?</p>
+
+<p>I intend to investigate Angular Directives as a way to accomplish this, but I have a feeling that would just shift the problem from having a bunch of page-specific controllers to having a bunch of page-specific directives, which would also likely need to follow some convention. </p>
+
+<p>Some other things to consider: In order to avoid polluting the global namespace, the javascript also needs to follow a convention. First, it is all wrapped in an IIFE. Second, it declares and object called MODULE that contains all the properties and functions specific to this page. This way, if you go on to read another post that has some javascript, there are no variables left in the global scope. Just one MODULE variable that will be overwritten on each new post load. </p>
+
+<p>Here's a preview of what that looks like:</p>
+<div class="code-frame">
+    <pre>
+(function playingWithCanvas() {
+  var _toggles = {
+    dev: false
+  };
+  MODULE = {};
+  MODULE = {
+    logit: function() {
+      console.log("it was logged");
+    },
+    addCanvas: function() {
+      if (_toggles.canvas)
+        return;
+      var canvas = document.createElement('canvas');
+      canvas.id = "mycanvas";
+      canvas.setAttribute('class', 'figure');
+      canvas.innerHTML = "Here is a new canvas!";
+      document.getElementById('canvasHolder').appendChild(canvas);
+      _toggles.canvas = 1;
+    };
+})
+    </pre>
+</div>
+
+<p>And an example of how it would be called in the HTML for the blog post:</p>
+
+<div class="code-frame">    
+<pre>
+&lt;button onclick="MODULE.addCanvas()">Add canvas&lt;/button&gt;
+
+</pre>
+</div>
+<p>Thanks for reading!</p>
